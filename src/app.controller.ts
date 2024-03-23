@@ -31,4 +31,36 @@ export class AppController {
 
     res.end(buffer);
   }
+
+  @Post('generatetor')
+  async generatePDFold(@Body() requestData: any) {
+    const { students } = requestData;
+    console.log(students);
+    const generatedPDFs = [];
+    for (const student of students) {
+      console.log('student ', student);
+      const pdfBuffer = await this.pdfService.generator300(student);
+      generatedPDFs.push(pdfBuffer);
+    }
+
+    return generatedPDFs;
+  }
+
+  @Post('generate')
+  async generatePDFs(@Body() requestData: any) {
+    const { students } = requestData;
+    const generatedPDFs = [];
+    for (const student of students) {
+      try {
+        const filePath = await this.pdfService.generator300(student);
+        generatedPDFs.push(filePath);
+      } catch (err) {
+        console.error(
+          `Error generating PDF for student ${student.name}: ${err}`,
+        );
+      }
+    }
+
+    return generatedPDFs;
+  }
 }

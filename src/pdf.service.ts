@@ -1,10 +1,18 @@
+import * as fs from 'fs';
+import { Injectable } from '@nestjs/common';
 import { join } from 'path';
 import { Course } from './enums/enums';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PDFDocument = require('pdfkit');
 import qrcode = require('qrcode');
 
+@Injectable()
 export class PDFService {
+  private readonly cwd: string;
+
+  constructor() {
+    this.cwd = process.cwd();
+  }
   async generarPDF(dto: Course): Promise<Buffer> {
     console.log(dto);
 
@@ -45,6 +53,104 @@ export class PDFService {
           console.warn(`Student ${student.name} has no document for QR code`);
         }
       }
+
+      const buffer = [];
+      doc.on('data', buffer.push.bind(buffer));
+      doc.on('end', () => {
+        const data = Buffer.concat(buffer);
+        resolve(data);
+      });
+      doc.end();
+    });
+
+    return pdfBuffer;
+  }
+
+  async generator300(student: any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const doc = new PDFDocument({
+          size: 'A4',
+          layout: 'landscape',
+          bufferPages: true,
+          autoFirstPage: false,
+        });
+
+        const fileName = `${student.document}.pdf`;
+
+        const writeStream = fs.createWriteStream(fileName);
+
+        doc.pipe(writeStream);
+
+        doc.addPage();
+        doc.font('Helvetica-Bold').fontSize(24);
+        doc.image(join(process.cwd(), './assets/background.png'), 0, 0, {
+          width: doc.page.width,
+          height: doc.page.height,
+        });
+        doc.text('', 0, 220);
+        doc.font('Helvetica-Bold').fontSize(24);
+        doc.text(student.name.toUpperCase(), {
+          width: doc.page.width,
+          align: 'center',
+        });
+
+        const document = student.document;
+
+        if (document) {
+          const qrBuffer = await this.generateQR(document); // Utiliza await dentro de una nueva función async
+          doc.image(qrBuffer, 0, doc.page.height - 150, {
+            width: 150,
+            height: 150,
+          });
+        } else {
+          console.warn(`Student ${student.name} has no document for QR code`);
+        }
+
+        doc.end();
+
+        writeStream.on('finish', () => {
+          resolve(fileName);
+        });
+        writeStream.on('error', (err) => {
+          reject(err);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  async generatePDF(studentData: any): Promise<Buffer> {
+    const { name, document } = studentData;
+
+    const pdfBuffer: Buffer = await new Promise((resolve) => {
+      const doc = new PDFDocument({
+        size: 'A4',
+        layout: 'landscape',
+      });
+
+      doc.addPage();
+      doc.font('Helvetica-Bold').fontSize(24);
+      //doc.image(join(this.cwd, './assets/background.png'), 0, 0, {
+      doc.image(join(process.cwd(), './assets/background.png'), 0, 0, {
+        // Utilizamos this.cwd en join()
+        width: doc.page.width,
+        height: doc.page.height,
+      });
+      doc.text('', 0, 220);
+      doc.font('Helvetica-Bold').fontSize(24);
+      doc.text(name, {
+        width: doc.page.width,
+        align: 'center',
+      });
+
+      const qrText = document.toString();
+      const qrBuffer = qrcode.toBuffer(qrText, { errorCorrectionLevel: 'H' });
+      doc.image(qrBuffer, 200, 200, {
+        width: 400,
+        height: 400,
+      });
 
       const buffer = [];
       doc.on('data', buffer.push.bind(buffer));
