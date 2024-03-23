@@ -1,5 +1,3 @@
-import { createPdf } from '@saemhco/nestjs-html-pdf';
-import * as path from 'path';
 import { join } from 'path';
 import { Course } from './enums/enums';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -7,33 +5,10 @@ const PDFDocument = require('pdfkit');
 import qrcode = require('qrcode');
 
 export class PDFService {
-  async firstExample() {
-    const filePath = path.join(process.cwd(), 'templates', 'pdf-profile.hbs');
-    return createPdf(filePath);
-  }
-  secondExample() {
-    const data = {
-      name: 'My PDF file',
-    };
-    const options = {
-      format: 'A4',
-      displayHeaderFooter: true,
-      margin: {
-        left: '10mm',
-        top: '25mm',
-        right: '10mm',
-        bottom: '15mm',
-      },
-      landscape: true,
-    };
-    const filePath = path.join(process.cwd(), 'templates', 'pdf-profile.hbs');
-    return createPdf(filePath, options, data);
-  }
-
   async generarPDF(dto: Course): Promise<Buffer> {
     console.log(dto);
 
-    const pdfBuffer: Buffer = await new Promise((resolve) => {
+    const pdfBuffer: Buffer = await new Promise(async (resolve) => {
       const doc = new PDFDocument({
         size: 'A4',
         layout: 'landscape',
@@ -41,7 +16,7 @@ export class PDFService {
         autoFirstPage: false,
       });
 
-      dto.students.forEach(async (student) => {
+      for (const student of dto.students) {
         doc.addPage();
 
         doc.font('Helvetica-Bold').fontSize(24);
@@ -56,20 +31,20 @@ export class PDFService {
           width: doc.page.width,
           align: 'center',
         });
+
         const document = student.document;
 
         if (document) {
-          const qrBuffer = await qrcode.toBuffer(document, {
-            errorCorrectionLevel: 'H',
-          });
-          doc.image(qrBuffer, 0, 0, {
-            width: 200,
-            height: 200,
+          console.log('si hay doc');
+          const qrBuffer = await this.generateQR(document);
+          doc.image(qrBuffer, 0, doc.page.height - 150, {
+            width: 150,
+            height: 150,
           });
         } else {
           console.warn(`Student ${student.name} has no document for QR code`);
         }
-      });
+      }
 
       const buffer = [];
       doc.on('data', buffer.push.bind(buffer));
@@ -83,7 +58,7 @@ export class PDFService {
     return pdfBuffer;
   }
 
-  async generarQR(texto: string): Promise<Buffer> {
-    return qrcode.toBuffer(texto, { errorCorrectionLevel: 'H' });
+  async generateQR(text: string): Promise<Buffer> {
+    return qrcode.toBuffer(text.toString(), { errorCorrectionLevel: 'H' });
   }
 }

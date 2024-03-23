@@ -14,3 +14,5 @@ export class AppService {
     return studentsNames.join(', ');
   }
 }
+// width: doc.page.width,
+// height: doc.page.height,
