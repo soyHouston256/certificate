@@ -66,7 +66,7 @@ export class PDFService {
     return pdfBuffer;
   }
 
-  async generator300(student: any): Promise<string> {
+  async generator300(student: any, code: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const doc = new PDFDocument({
@@ -75,10 +75,16 @@ export class PDFService {
           bufferPages: true,
           autoFirstPage: false,
         });
-
+        const web = 'https://soflands.com/certificados/';
         const fileName = `${student.document}.pdf`;
+        const folderName = `./${code}`;
+        const folderPath = join(process.cwd(), folderName); // Ruta de la carpeta
+        if (!fs.existsSync(folderPath)) {
+          fs.mkdirSync(folderPath);
+        }
+        const filePath = join(folderPath, fileName);
 
-        const writeStream = fs.createWriteStream(fileName);
+        const writeStream = fs.createWriteStream(filePath);
 
         doc.pipe(writeStream);
 
@@ -98,7 +104,8 @@ export class PDFService {
         const document = student.document;
 
         if (document) {
-          const qrBuffer = await this.generateQR(document); // Utiliza await dentro de una nueva función async
+          const route = `${web}/${code}/${fileName}`;
+          const qrBuffer = await this.generateQR(route); // Utiliza await dentro de una nueva función async
           doc.image(qrBuffer, 0, doc.page.height - 150, {
             width: 150,
             height: 150,

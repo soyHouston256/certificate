@@ -35,11 +35,12 @@ export class AppController {
   @Post('generatetor')
   async generatePDFold(@Body() requestData: any) {
     const { students } = requestData;
+    const { code } = requestData;
     console.log(students);
     const generatedPDFs = [];
     for (const student of students) {
       console.log('student ', student);
-      const pdfBuffer = await this.pdfService.generator300(student);
+      const pdfBuffer = await this.pdfService.generator300(student, code);
       generatedPDFs.push(pdfBuffer);
     }
 
@@ -49,10 +50,11 @@ export class AppController {
   @Post('generate')
   async generatePDFs(@Body() requestData: any) {
     const { students } = requestData;
+    const { code } = requestData;
     const generatedPDFs = [];
     for (const student of students) {
       try {
-        const filePath = await this.pdfService.generator300(student);
+        const filePath = await this.pdfService.generator300(student, code);
         generatedPDFs.push(filePath);
       } catch (err) {
         console.error(
