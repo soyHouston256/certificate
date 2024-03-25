@@ -99,7 +99,7 @@ export class PDFService {
           width: doc.page.width,
           height: doc.page.height,
         });
-        doc.text('', 0, 220);
+        doc.text('', 0, 280);
         doc.font('Helvetica-Bold').fontSize(24);
         doc.text(student.name.toUpperCase(), {
           width: doc.page.width,
