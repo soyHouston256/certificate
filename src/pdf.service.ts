@@ -66,7 +66,11 @@ export class PDFService {
     return pdfBuffer;
   }
 
-  async generator300(student: any, code: string): Promise<string> {
+  async generator300(
+    student: any,
+    code: string,
+    background: string,
+  ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         const doc = new PDFDocument({
@@ -90,7 +94,8 @@ export class PDFService {
 
         doc.addPage();
         doc.font('Helvetica-Bold').fontSize(24);
-        doc.image(join(process.cwd(), './assets/background.png'), 0, 0, {
+        //doc.image(join(process.cwd(), './assets/background.png'), 0, 0, {
+        doc.image(join(process.cwd(), `./uploads/${background}`), 0, 0, {
           width: doc.page.width,
           height: doc.page.height,
         });
