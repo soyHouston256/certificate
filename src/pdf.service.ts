@@ -5,6 +5,7 @@ import { Course } from './enums/enums';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const PDFDocument = require('pdfkit');
 import qrcode = require('qrcode');
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PDFService {
@@ -79,8 +80,10 @@ export class PDFService {
           bufferPages: true,
           autoFirstPage: false,
         });
-        const web = 'https://soflands.com/certificados/';
-        const fileName = `${student.document}.pdf`;
+        const web = 'https://soflands.com/certificados';
+        //const encodeName = encodeURIComponent(student.document);
+        const encodeName = uuidv4(); 
+        const fileName = `${encodeName}.pdf`;
         const folderName = `./certificates/${code}`;
         const folderPath = join(process.cwd(), folderName); // Ruta de la carpeta
         if (!fs.existsSync(folderPath)) {

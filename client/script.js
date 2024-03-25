@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const inputFile = document.getElementById('input-file');
   const sendButton = document.querySelector('.send-form');
+  const inputImage = document.getElementById('input-image');
   let studentsOfCourse = [];
+  let background = null;
 
   sendButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -13,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       name: nameValue,
       code: codeValue,
       date: dateValue,
+      background: background,
       students: studentsOfCourse,
     };
 
@@ -64,6 +67,21 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsArrayBuffer(file);
   });
 
+  inputImage.addEventListener('change', (e)=>{
+    const fileInput = e.target;
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert('Por favor selecciona un archivo de imagen.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    sendImageToServer(formData);
+  })
+
   // Función para enviar los datos al servidor
   function sendDataToServer(formData) {
     console.log('Enviando datos al servidor:', formData);
@@ -84,4 +102,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // window.open(url);
     //});
   }
+
+  function sendImageToServer(formData) {
+    console.log('Enviando imagen al servidor:', formData);
+
+    // Define la URL del endpoint al que deseas enviar los datos
+    const endpointUrl = 'http://localhost:3000/upload';
+
+    // Realiza una solicitud POST a la URL del endpoint
+    fetch(endpointUrl, {
+      method: 'post',
+      body: formData, // Convierte los datos del formulario a formato JSON
+    })
+    .then((response) => response.json())
+    .then(data => {
+      background = data.background
+      console.log('Respuesta del servidor:', data.background);
+      console.log(background)
+    })
+    .catch(error => {
+      console.error('Error al enviar la imagen:', error);
+    });
+    //.then((blob) => {
+    // const url = window.URL.createObjectURL(blob);
+    // window.open(url);
+    //});
+  }
+  
 });

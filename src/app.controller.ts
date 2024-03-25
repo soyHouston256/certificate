@@ -97,7 +97,7 @@ export class AppController {
   @Post('upload')
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     return {
-      image: `${file.filename}`,
+      background: `${file.filename}`,
     };
   }
 }
