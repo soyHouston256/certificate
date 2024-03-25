@@ -1,0 +1,42 @@
+.container-form{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+}
+.form-certificates{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 76vh;
+    width: 28vw;
+    padding: 0px 20px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px black solid;
+}
+.title-form{
+    text-align: center;
+    font-size: 20px;
+}
+.send-form{
+    margin-top: 12px;
+    background-color: lightgoldenrodyellow;
+    border: 0.5px solid lightblue;
+    border-radius: 4px;
+}
+
+@media only screen and (max-width: 1024px) {
+    /* Estilos para pantallas con menos de 600px de ancho */
+    .form-certificates{
+        width: 76vw; 
+    }
+  }
+
+@media only screen and (max-height: 1024px) {
+    /* Estilos para pantallas con menos de 600px de ancho */
+    .form-certificates{
+        height: 72vh; 
+    }
+  }

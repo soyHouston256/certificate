@@ -81,7 +81,7 @@ export class PDFService {
         });
         const web = 'https://soflands.com/certificados/';
         const fileName = `${student.document}.pdf`;
-        const folderName = `./${code}`;
+        const folderName = `./certificates/${code}`;
         const folderPath = join(process.cwd(), folderName); // Ruta de la carpeta
         if (!fs.existsSync(folderPath)) {
           fs.mkdirSync(folderPath);
