@@ -130,6 +130,7 @@ export class PDFService {
         writeStream.on('error', (err) => {
           reject(err);
         });
+        return web;
       } catch (error) {
         reject(error);
       }
