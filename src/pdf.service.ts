@@ -82,7 +82,7 @@ export class PDFService {
         });
         const web = 'https://soflands.com/certificados';
         //const encodeName = encodeURIComponent(student.document);
-        const encodeName = uuidv4(); 
+        const encodeName = uuidv4();
         const fileName = `${encodeName}.pdf`;
         const folderName = `./certificates/${code}`;
         const folderPath = join(process.cwd(), folderName); // Ruta de la carpeta
@@ -125,12 +125,12 @@ export class PDFService {
         doc.end();
 
         writeStream.on('finish', () => {
-          resolve(fileName);
+          //resolve(fileName);
+          resolve(`${web}/${code}/${fileName}`);
         });
         writeStream.on('error', (err) => {
           reject(err);
         });
-        return web;
       } catch (error) {
         reject(error);
       }

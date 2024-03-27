@@ -40,3 +40,34 @@
         height: 72vh; 
     }
   }
+
+/* Estilos para el div de resultado */
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Estilos para el párrafo dentro del div de resultado */
+.result p {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Estilos para la lista dentro del div de resultado */
+.result ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Estilos para los elementos de lista dentro de la lista */
+.result li {
+    margin-bottom: 5px;
+}
+
+/* Estilos para los enlaces dentro de los elementos de lista */
+.result a {
+    color: blue;
+    text-decoration: underline;
+}

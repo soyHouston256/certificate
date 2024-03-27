@@ -8,13 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   sendButton.addEventListener('click', (e) => {
     e.preventDefault();
 
-    const nameValue = document.querySelector('#nameOfCourse').value;
     const codeValue = document.querySelector('#nameOfCode').value;
-    const dateValue = document.querySelector('#nameOfDate').value;
     const formData = {
-      name: nameValue,
       code: codeValue,
-      date: dateValue,
       background: background,
       students: studentsOfCourse,
     };
@@ -67,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsArrayBuffer(file);
   });
 
-  inputImage.addEventListener('change', (e)=>{
+  inputImage.addEventListener('change', (e) => {
     const fileInput = e.target;
     const file = fileInput.files[0];
 
@@ -80,27 +76,44 @@ document.addEventListener('DOMContentLoaded', () => {
     formData.append('file', file);
 
     sendImageToServer(formData);
-  })
+  });
 
   // Función para enviar los datos al servidor
   function sendDataToServer(formData) {
     console.log('Enviando datos al servidor:', formData);
 
-    // Define la URL del endpoint al que deseas enviar los datos
     const endpointUrl = 'http://localhost:3000/generate';
 
-    // Realiza una solicitud POST a la URL del endpoint
     fetch(endpointUrl, {
       method: 'post',
       headers: {
-        'Content-Type': 'application/json', // Indica que estás enviando datos en formato JSON
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formData), // Convierte los datos del formulario a formato JSON
-    }).then((response) => response.blob());
-    //.then((blob) => {
-    // const url = window.URL.createObjectURL(blob);
-    // window.open(url);
-    //});
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        const resultDiv = document.querySelector('.result'); // Seleccionamos el div de resultado
+        const resultUl = resultDiv.querySelector('ul'); // Seleccionamos la lista dentro del div de resultado
+
+        // Limpiamos el contenido anterior
+        resultUl.innerHTML = '';
+
+        // Iteramos sobre los enlaces generados y los agregamos como elementos de lista
+        data.forEach((link) => {
+          const listItem = document.createElement('li');
+          const linkElement = document.createElement('a');
+          linkElement.href = link;
+          linkElement.textContent = link;
+          listItem.appendChild(linkElement);
+          resultUl.appendChild(listItem);
+        });
+      })
+      .catch((error) => {
+        console.error('Error al procesar la respuesta:', error);
+      });
   }
 
   function sendImageToServer(formData) {
@@ -114,19 +127,18 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'post',
       body: formData, // Convierte los datos del formulario a formato JSON
     })
-    .then((response) => response.json())
-    .then(data => {
-      background = data.background
-      console.log('Respuesta del servidor:', data.background);
-      console.log(background)
-    })
-    .catch(error => {
-      console.error('Error al enviar la imagen:', error);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        background = data.background;
+        console.log('Respuesta del servidor:', data.background);
+        console.log(background);
+      })
+      .catch((error) => {
+        console.error('Error al enviar la imagen:', error);
+      });
     //.then((blob) => {
     // const url = window.URL.createObjectURL(blob);
     // window.open(url);
     //});
   }
-  
 });

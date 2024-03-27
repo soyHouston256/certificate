@@ -75,8 +75,6 @@ export class AppController {
           background,
         );
         generatedPDFs.push(filePath);
-        console.log('que fue', generatedPDFs);
-        return generatedPDFs;
       } catch (err) {
         console.error(
           `Error generating PDF for student ${student.name}: ${err}`,
