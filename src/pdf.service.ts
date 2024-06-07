@@ -80,7 +80,9 @@ export class PDFService {
           bufferPages: true,
           autoFirstPage: false,
         });
-        const web = 'https://soflands.com/certificados';
+        //const web = 'https://soflands.com/certificados';
+        const web = 'https://edudigital.pro/certificados';
+
         //const encodeName = encodeURIComponent(student.document);
         const encodeName = uuidv4();
         const fileName = `${encodeName}.pdf`;
@@ -102,25 +104,19 @@ export class PDFService {
           width: doc.page.width,
           height: doc.page.height,
         });
-        doc.text('', 0, 280);
+        doc.text('', 0, 210);
         doc.font('Helvetica-Bold').fontSize(24);
         doc.text(student.name.toUpperCase(), {
           width: doc.page.width,
           align: 'center',
         });
 
-        const document = student.document;
-
-        if (document) {
-          const route = `${web}/${code}/${fileName}`;
-          const qrBuffer = await this.generateQR(route); // Utiliza await dentro de una nueva función async
-          doc.image(qrBuffer, 0, doc.page.height - 150, {
-            width: 150,
-            height: 150,
-          });
-        } else {
-          console.warn(`Student ${student.name} has no document for QR code`);
-        }
+        const route = `${web}/${code}/${fileName}`;
+        const qrBuffer = await this.generateQR(route); // Utiliza await dentro de una nueva función async
+        doc.image(qrBuffer, doc.page.width - 144, 32, {
+          width: 118,
+          height: 118,
+        });
 
         doc.end();
 

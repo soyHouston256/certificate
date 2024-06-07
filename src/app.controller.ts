@@ -46,16 +46,16 @@ export class AppController {
   async generatePDFold(@Body() requestData: any) {
     const { students } = requestData;
     const { code, background } = requestData;
-    console.log(students);
+    //console.log(students);
     const generatedPDFs = [];
     for (const student of students) {
-      console.log('student ', student);
+      //console.log('student ', student);
       const pdfBuffer = await this.pdfService.generator300(
         student,
         code,
         background,
       );
-      console.log('esto es', pdfBuffer);
+      //console.log('esto es', pdfBuffer);
       generatedPDFs.push(pdfBuffer);
     }
 
